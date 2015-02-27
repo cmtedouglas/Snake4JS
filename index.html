@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Game Dev</title>
+<link rel="stylesheet" href="css/normalize.css" type="text/css" />
+<style type="text/css">
+#mycanvas {
+        background-color: #666;
+        position: absolute;
+        top: 20px;
+        left: 100px;
+}
+</style>
+<script>
+
+var WIDTH=null;
+var HEIGHT=null;
+var ctx=null;
+var movement=null;
+var oB = null;
+var oA = null;
+var newDirection=null;
+var movSize = null;
+
+var init = function() {
+    movement = {
+        x: 0,
+        y: 0,
+        w: 30,
+        h: 30,
+        dir: "right"
+    }
+    
+    oB = Object.create(movement);
+    oA = Object.create(movement);
+    
+    movSize=30;
+    WIDTH = 20*movSize;
+    HEIGHT=WIDTH;
+    ctx.canvas.width = WIDTH;
+    ctx.canvas.height = HEIGHT;
+    oB.y+=movSize*10;
+    
+
+}
+
+var run = function() {
+    switch(newDirection)
+    {
+        case "right":
+            if(oA.dir != "left")  
+            {
+                oA.x+=movSize;
+                oA.dir="right";
+                newDirection = oA.dir;
+                break;
+            }
+        case "down":
+            if(oA.dir != "up")  
+            {
+                oA.y+=movSize;
+                oA.dir="down";
+                newDirection = oA.dir;
+                break;
+            }
+            
+        case "left":
+            if(oA.dir != "right")  
+            {
+                oA.x-=movSize;
+                oA.dir="left";
+                newDirection = oA.dir;
+                break;
+            }
+            
+        case "up":
+            if(oA.dir != "down")  
+            {
+                oA.y-=movSize;
+                oA.dir="up";
+                newDirection = oA.dir;
+                break;
+            }
+            
+        default:
+            oA.x+=movSize;
+            oA.dir="right";
+            newDirection = oA.dir;
+    }
+    ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "rgba(255,0,0,1)";
+    ctx.fillRect(oA.x, oA.y, oA.w, oA.h);
+    ctx.fillStyle = "rgba(0,0,255,1)";
+    ctx.fillRect(oB.x, oB.y, oB.w, oB.h);
+    if(isCollided())
+    {
+            
+    }
+    
+}
+
+
+var keypress = function(e)
+{
+    if (e.keyCode == 68)
+    {
+        newDirection = "right"
+    }
+    else if(e.keyCode == 83)
+    {
+        newDirection = "down"
+    }
+    else if(e.keyCode == 65)
+    {
+        newDirection = "left"
+    }
+    else if(e.keyCode == 87)
+    {
+        newDirection = "up"
+    }
+}
+
+window.onload = function() {
+    var canvas = document.getElementById('mycanvas');
+
+    ctx = canvas.getContext('2d');
+    window.addEventListener("keydown", function(e) {
+        keypress(e);
+        
+    });
+    //ctx.fillRect(0,0,10,10);
+    //ctx.fillRect(100,0,10,10);
+    init();
+    var loop = window.setInterval(run, 33);
+}
+    
+
+    
+</script>
+
+
+</head>
+
+<body>
+    <canvas id='mycanvas' width='800px' height='600px'></canvas>
+</body>
+
+</html>
