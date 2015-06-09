@@ -17,10 +17,19 @@ var WIDTH=null;
 var HEIGHT=null;
 var ctx=null;
 var movement=null;
+var wall = null;
 var oB = null;
 var oA = null;
+var wallUp=null;
+var wallDown=null
+var wallRight=null
+var wallLeft=null;
 var newDirection=null;
 var movSize = null;
+var score=0;
+
+//auxiliary debug variables
+var counter=0;
 
 var init = function() {
     movement = {
@@ -31,17 +40,70 @@ var init = function() {
         dir: "right"
     }
     
-    oB = Object.create(movement);
-    oA = Object.create(movement);
+    wall = {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0
+    }
     
     movSize=30;
-    WIDTH = 20*movSize;
+    WIDTH = 600;
     HEIGHT=WIDTH;
     ctx.canvas.width = WIDTH;
     ctx.canvas.height = HEIGHT;
+
+    
+    
+    //Inicializa personagens
+    oB = Object.create(movement);
+    oA = Object.create(movement);
     oB.y+=movSize*10;
     
+    //Inicializa paredes
+    wallDown = Object.create(wall)
+    wallDown.w = WIDTH;
+    wallDown.h=1
+    wallDown.x=HEIGHT;
+    wallDown.y=0;
+    
+    wallUp = Object.create(wall)
+    wallUp.w = WIDTH;
+    wallUp.h=1
+    wallUp.x=0;
+    wallUp.y=0;
+    
+    wallRight = Object.create(wall)
+    wallRight.w = 1;
+    wallRight.h=HEIGHT
+    wallRight.x=0;
+    wallRight.y=0;
+    
+    wallLeft = Object.create(wall)
+    wallLeft.w = 1;
+    wallLeft.h=HEIGHT
+    wallLeft.x=0;
+    wallLeft.y=HEIGHT;
+}
 
+var isCollided = function(obA, obB)
+{
+    if (obA.x < obB.x + obB.w &&
+        obA.x + obA.w> obB.x &&
+        obA.y < obB.y + obB.h &&
+        obA.h + obA.y > obB.y){
+            return true;
+        }
+        return false;
+}
+
+var updateScore = function(score)
+{
+    ctx.save();
+    ctx.font="20px Georgia";
+    ctx.fillStyle = "rgba(255,0,0,1)";
+    ctx.fillText("Score: " + score, 10, 90);
+    ctx.restore();
 }
 
 var run = function() {
@@ -81,7 +143,6 @@ var run = function() {
                 newDirection = oA.dir;
                 break;
             }
-            
         default:
             oA.x+=movSize;
             oA.dir="right";
@@ -92,9 +153,17 @@ var run = function() {
     ctx.fillRect(oA.x, oA.y, oA.w, oA.h);
     ctx.fillStyle = "rgba(0,0,255,1)";
     ctx.fillRect(oB.x, oB.y, oB.w, oB.h);
-    if(isCollided())
+    updateScore(score);
+    if(isCollided(oA, oB)) {
+        score++;
+    }
+    if (isCollided(oA, wallUp) ||
+        isCollided(oA, wallDown) ||
+        isCollided(oA, wallRight) ||
+        isCollided(oA, wallLeft))
     {
-            
+        counter++;
+            console.log("Collision Detected;" + counter);
     }
     
 }
